@@ -26,7 +26,7 @@ namespace GCD_CSharp
 			monitor.Start();
 		}
 
-		internal QueueManager GetInstance(){
+		internal static QueueManager GetInstance(){
 			return instance;
 		}
 
@@ -50,12 +50,16 @@ namespace GCD_CSharp
 		private DispatchQueue GetDispatchQueue(BlockingPriorityQueue<DispatchQueue> blockerQueue){
 			DispatchQueue queue = blockerQueue.Peek ();
 			if (queue == null || blockerQueue.Count () <= MAX_QUEUE_SIZE || queue.Size () >= MAX_QUEUE_TOLERANCE) {
-				queue = new DispatchQueue ("Concurrent Queue", PriorityForQueue (blockerQueue));
+				queue = new DispatchQueue ("Concurrent Queue "+blockerQueue.Count(), PriorityForQueue (blockerQueue));
 			} else {
 				queue = blockerQueue.Dequeue ();
 			}
+			Console.WriteLine ("Queue has " + queue.Size () + " jobs");
+			Console.WriteLine (blockerQueue.Count() +" Queues");
 			blockerQueue.enqueue (queue);
-			//monitor pules
+			lock (_monitorLock) {
+				Monitor.Pulse (_monitorLock);
+			}
 			return queue;
 		}
 
@@ -111,10 +115,13 @@ namespace GCD_CSharp
 
 		private void CheckPriorityQueue(BlockingPriorityQueue<DispatchQueue> queue){
 			while (queue.Count() > MAX_QUEUE_SIZE) {
-				DispatchQueue dQueue = queue.Peek ();
+				DispatchQueue dQueue = queue.Dequeue ();
+				if (dQueue == null) {
+					return;
+				}
 				if (dQueue.State == DispatchQueue.QueueState.Idle || dQueue.State == DispatchQueue.QueueState.Disposed) {
 					dQueue.Dispose ();
-					queue.Remove (dQueue);
+					Console.WriteLine ("Removing queue");
 				} else {
 					break;
 				}

@@ -15,6 +15,10 @@ namespace GCD_CSharp
 		public int enqueue(T value)
 		{
 			lock (_queueLock) {
+				if (_innerList.Count == 0) {
+					_innerList.Add (value);
+					return 1;
+				}
 				int i = 0;
 				while (i < _innerList.Count) {
 					T point = _innerList [i];
@@ -33,7 +37,10 @@ namespace GCD_CSharp
 		}
 
 		public T Peek(){
-			return _innerList [0];
+			if (_innerList.Count > 0) {
+				return _innerList [0];
+			}
+			return default(T);
 		}
 
 		public T Dequeue(){

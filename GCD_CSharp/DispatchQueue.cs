@@ -80,8 +80,8 @@ namespace GCD_CSharp
 			if (State == QueueState.Disposed) {
 				throw new InvalidOperationException ();
 			}
+			_queue.Enqueue (action);
 			lock (_queueLock) {
-				_queue.Enqueue (action);
 				Monitor.Pulse (_queueLock);
 			}
 		}

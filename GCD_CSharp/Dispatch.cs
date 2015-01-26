@@ -31,27 +31,17 @@ namespace GCD_CSharp
 		}
 
 		public static DispatchQueue GetGlobalQueue(DistatchPriority priority){
-			DispatchQueue queue = null;
+
 			switch (priority) {
 			case DistatchPriority.Background:
-				queue = new DispatchQueue("background", ThreadPriority.BelowNormal);
-				break;
-			case DistatchPriority.Default:
-				queue = new DispatchQueue("default", ThreadPriority.Normal);
-				break;
+				return QueueManager.GetInstance ().GetBackgroundQueue ();
 			case DistatchPriority.High:
-				queue = new DispatchQueue("high", ThreadPriority.Highest);
-				break;
+				return QueueManager.GetInstance ().GetHightPriorityQueue ();
 			case DistatchPriority.Low:
-				queue = new DispatchQueue("low", ThreadPriority.Lowest);
-				break;
+				return QueueManager.GetInstance ().GetLowPriorityQueue ();
 			default:
-				queue = new DispatchQueue ("default", ThreadPriority.Normal);
-				break;
-			
+				return QueueManager.GetInstance ().GetDefaultQueue ();
 			}
-
-			return queue;
 		}
 
 
