@@ -9,10 +9,10 @@ namespace GCD_CSharp
 		private readonly int MAX_QUEUE_SIZE = 15;
 		private readonly int MAX_QUEUE_TOLERANCE = 15;
 
-		private BlockingPriorityQueue<DispatchQueue> _defaultQueues;
-		private BlockingPriorityQueue<DispatchQueue> _highQueues;
-		private BlockingPriorityQueue<DispatchQueue> _lowQueues;
-		private BlockingPriorityQueue<DispatchQueue> _backgroundQueues;
+		private readonly BlockingPriorityQueue<DispatchQueue> _defaultQueues;
+		private readonly BlockingPriorityQueue<DispatchQueue> _highQueues;
+		private readonly BlockingPriorityQueue<DispatchQueue> _lowQueues;
+		private readonly BlockingPriorityQueue<DispatchQueue> _backgroundQueues;
 
 		private QueueManager ()
 		{
