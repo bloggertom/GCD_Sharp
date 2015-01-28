@@ -46,21 +46,28 @@ namespace GCD_CSharp
 			return GetDispatchQueue (_highQueues);
 		}
 
-
+        //private static object _getterLock = new object();
 		private DispatchQueue GetDispatchQueue(BlockingPriorityQueue<DispatchQueue> blockerQueue){
-			DispatchQueue queue = blockerQueue.Peek ();
-			if (queue == null || blockerQueue.Count () <= MAX_QUEUE_SIZE || queue.Size () >= MAX_QUEUE_TOLERANCE) {
-				queue = new DispatchQueue ("Concurrent Queue "+blockerQueue.Count(), PriorityForQueue (blockerQueue));
-			} else {
-				queue = blockerQueue.Dequeue ();
-			}
-			Console.WriteLine ("Queue has " + queue.Size () + " jobs");
-			Console.WriteLine (blockerQueue.Count() +" Queues");
-			blockerQueue.enqueue (queue);
-			lock (_monitorLock) {
-				Monitor.Pulse (_monitorLock);
-			}
-			return queue;
+		   
+                DispatchQueue queue = blockerQueue.Peek();
+                if (queue == null || blockerQueue.Count() < MAX_QUEUE_SIZE || (blockerQueue.Count() >= MAX_QUEUE_SIZE && queue.Size() >= MAX_QUEUE_TOLERANCE))
+                {
+                    queue = new DispatchQueue("Concurrent Queue " + blockerQueue.Count(), PriorityForQueue(blockerQueue));
+                }
+                else
+                {
+                    queue = blockerQueue.Dequeue();
+                }
+                Console.WriteLine("Queue has " + queue.Size() + " jobs");
+                Console.WriteLine(blockerQueue.Count() + " Queues");
+                blockerQueue.enqueue(queue);
+
+                lock (_monitorLock)
+                {
+                    Monitor.Pulse(_monitorLock);
+                }
+                return queue;
+		    
 		}
 
 		private ThreadPriority PriorityForQueue(BlockingPriorityQueue<DispatchQueue> queue){
@@ -108,7 +115,7 @@ namespace GCD_CSharp
 						Monitor.Wait (_monitorLock);
 					}
 				} else {
-					Thread.Sleep (1000);
+					Thread.Sleep (500);
 				}
 			}
 		}

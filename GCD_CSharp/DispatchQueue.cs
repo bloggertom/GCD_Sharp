@@ -68,10 +68,11 @@ namespace GCD_CSharp
 				}
 
 				Action todo;
-				if (_queue.TryDequeue (out todo))
-					State = QueueState.Busy;
-					todo ();
-
+			    if (_queue.TryDequeue(out todo))
+			    {
+                    State = QueueState.Busy;
+                    todo();
+			    }
 			}
 		}
 

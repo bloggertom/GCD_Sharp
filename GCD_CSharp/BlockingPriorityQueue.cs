@@ -20,15 +20,25 @@ namespace GCD_CSharp
 					return 1;
 				}
 				int i = 0;
-				while (i < _innerList.Count) {
-					T point = _innerList [i];
-					if (point.CompareTo (value) <= 0) {
-						_innerList.Insert (i, value);
-						return i;
-					} else {
-						i++;
-					}
-
+				while (i <= _innerList.Count) {
+				    if (i == _innerList.Count)
+				    {
+				        _innerList.Add(value);
+				        break;
+				    }
+				    else
+				    {
+                        T point = _innerList[i];
+                        if (point.CompareTo(value) <= 0)
+                        {
+                            _innerList.Insert(i, value);
+                            return i;
+                        }
+                        else
+                        {
+                            i++;
+                        }
+				    }
 				}
 
 			}
@@ -36,14 +46,19 @@ namespace GCD_CSharp
 			return 0;
 		}
 
-		public T Peek(){
-			if (_innerList.Count > 0) {
-				return _innerList [0];
-			}
-			return default(T);
-		}
+	    public T Peek()
+	    {
+	        lock (_queueLock)
+	        {
+	            if (_innerList.Count > 0)
+	            {
+	                return _innerList[0];
+	            }
+	            return default(T);
+	        }
+	    }
 
-		public T Dequeue(){
+	    public T Dequeue(){
 			lock (_queueLock) {
 				T temp = _innerList [0];
 				_innerList.Remove (temp);
@@ -62,7 +77,11 @@ namespace GCD_CSharp
 
 		public int Count()
 		{
-			return _innerList.Count;
+		    lock (_queueLock)
+		    {
+                return _innerList.Count;
+		    }
+			
 		}
 
 		public void Clear()
